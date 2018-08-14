@@ -11,7 +11,7 @@ setInterval(function() {
   var data = IMU.getValueSync();
   var tempF = data.temperature * 1.8 + 21;
   var pressureHg = data.pressure * 29.92 / 1013.25;
-  request.post('http://localhost:8080/api/sense_entries?key=' + secret_key,
+  request.post('http://localhost:8080/api/sense_entries?secret_key=' + secret_key,
     { json: { temperature: tempF.toFixed(2),
 			  pressure: pressureHg.toFixed(2),
 			  humidity: data.humidity.toFixed(2) } },
