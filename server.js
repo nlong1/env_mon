@@ -74,25 +74,30 @@ app.get('/api/sense_entries_graph', function(req, res) {
 });
 
 app.post('/api/sense_entries', function(req, res) {
- 
-  SenseEntry.create({
-    created : new Date(),
-    temperature : req.body.temperature,
-    humidity : req.body.humidity,
-    pressure : req.body.pressure
-  }, function(err, sense_entry) {
-    if (err)
-      res.send(err);
-	  
-    res.json({});
-  });
+
+  if (req.query.secret_key == secret_key) {
+    SenseEntry.create({
+      created : new Date(),
+      temperature : req.body.temperature,
+      humidity : req.body.humidity,
+      pressure : req.body.pressure
+    }, function(err, sense_entry) {
+      if (err)
+        res.send(err);
+	    
+      res.json({});
+    });
   
     SenseEntryArchive.create({
-    created : new Date(),
-    temperature : req.body.temperature,
-    humidity : req.body.humidity,
-    pressure : req.body.pressure
-  }, function(err, sense_entry) {});
+      created : new Date(),
+      temperature : req.body.temperature,
+      humidity : req.body.humidity,
+      pressure : req.body.pressure
+    }, function(err, sense_entry) {});
+  } 
+  else {
+    res.status(404).send('Not found');
+  }
 });
 
 
