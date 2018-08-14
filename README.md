@@ -4,6 +4,11 @@
 sudo apt-get install sense-hat
 sudo apt-get install mongodb
 start mongod (& add to init?)
+(Create capped collection)
+mongo
+  use basement_monitor
+  db.createCollection("senseentries", { capped: true, size: 5242880 } )
+  db.senseentries.find().addOption(2)
 git clone <this repo>
 cd env_mon
 npm install
