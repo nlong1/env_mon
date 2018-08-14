@@ -16,7 +16,7 @@ start mongod (& add to init?)
 
 mongo
 
-use basement_monitor
+use env_mon
 
 db.createCollection("senseentries", { capped: true, size: 5242880 } )
 
