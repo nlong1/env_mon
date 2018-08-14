@@ -2,6 +2,10 @@
 
 -Bare RPi Installation-
 
+apt-get install nodejs -y
+
+sudo apt-get install node
+
 sudo apt-get install sense-hat
 
 sudo apt-get install mongodb
