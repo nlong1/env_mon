@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <title>Basement Monitor</title>
+  <title>Environment Monitor</title>
   
   <link rel="stylesheet" href="./slds213/assets/styles/salesforce-lightning-design-system.css">
   <link rel="stylesheet" href="/slds213/assets/styles/slds.css"/>
@@ -14,7 +14,7 @@
   
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
-  <script src="http://192.168.1.131:3000/socket.io/socket.io.js"></script>
+  <script src="http://rpi2:3000/socket.io/socket.io.js"></script>
   <script src="/angular-chart.js/node_modules/chart.js/dist/Chart.js"></script>
   <script src="/angular-chart.js/dist/angular-chart.js"></script>
 </head>
@@ -32,7 +32,7 @@
 		  console.log('Error: ' + data);
 		});
 			
-		var socket = io.connect("http://192.168.1.131:3000");
+		var socket = io.connect("http://rpi2:3000");
 	
 		socket.on('senseentries_evt', function(doc){
 			$('#tempTxt').text(doc.temperature);

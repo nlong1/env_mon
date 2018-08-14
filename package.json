@@ -1,7 +1,7 @@
 {
-  "name": "node-basementmonitor",
-  "version": "0.0.0",
-  "description": "Basement Monitor",
+  "name": "node-env_mon",
+  "version": "0.0.2",
+  "description": "Environment Monitor",
   "main": "server.js",
   "author": "Nathan Long (nathanlong@gmail.com)",
   "dependencies": {
