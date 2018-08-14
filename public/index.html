@@ -1,0 +1,157 @@
+<!doctype html>
+
+<html ng-app="senseEntry">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Basement Monitor</title>
+  
+  <link rel="stylesheet" href="./slds213/assets/styles/salesforce-lightning-design-system.css">
+  <link rel="stylesheet" href="/slds213/assets/styles/slds.css"/>
+  <link rel="stylesheet" href="/slds213/assets/styles/site.css"/>
+  <link rel="stylesheet" href="/assets/css/bmsite.css"/>
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
+  <script src="http://192.168.1.131:3000/socket.io/socket.io.js"></script>
+  <script src="/angular-chart.js/node_modules/chart.js/dist/Chart.js"></script>
+  <script src="/angular-chart.js/dist/angular-chart.js"></script>
+</head>
+
+<script>
+	angular.module('senseEntry', ["chart.js"])
+
+	.controller('mainController', function($scope, $http) {
+
+	  $http.get('/api/sense_entries')
+		.success(function(data) {
+		  $scope.sense_entries = data;
+		})
+		.error(function(data) {	
+		  console.log('Error: ' + data);
+		});
+			
+		var socket = io.connect("http://192.168.1.131:3000");
+	
+		socket.on('senseentries_evt', function(doc){
+			$('#tempTxt').text(doc.temperature);
+			$('#humidityTxt').text(doc.humidity);
+			$('#pressureTxt').text(doc.pressure);
+			$http.get('/api/sense_entries')
+				.success(function(data) {
+					$scope.sense_entries = data;
+				})
+			.error(function(data) {	
+				console.log('Error: ' + data);
+			});
+			$scope.$apply();
+		});	
+
+	})
+	.controller('chartController', function ($scope, $http) {
+		
+		$http.get('/api/sense_entries_graph')
+	    .success(function(res) {
+		  $scope.graph_data_created = res[0];
+		  $scope.graph_data_temp = res[1];
+		  $scope.graph_data_humidity = res[2];
+		  $scope.graph_data_pressure = res[3];
+		  $scope.labels = $scope.graph_data_created;
+		  $scope.data = [];
+		  $scope.data.push($scope.graph_data_temp, $scope.graph_data_humidity, $scope.graph_data_pressure);
+		});
+	  
+	  $scope.series = ['Temperature', 'Humidity', 'Pressure'];
+	  $scope.colors = ['ff80ff', '#0080ff', '#9cd76e'];
+	});
+  </script> 
+  <body ng-controller="mainController">
+	<div class="stat-cards">
+		<ul class="slds-grid slds-wrap slds-grid--align-spread slds-grid--pull-padded-xx-large slds-m-top--x-large">
+			<li class="slds-col--padded-large slds-size--1-of-1 slds-large-size--1-of-3">
+				<div class="grid-card">
+					<img class="cardImg" src="/assets/images/icon-temp.svg" alt="">
+					<dl>
+						<dt class="site-text-heading--label-weak-large">Temperature</dt>
+						<dd>
+							<hr class="hr hr--orange">
+							<div id="tempTxt" style="font-size: 36px; text-align: center; color: darkgrey;">0</div>
+						</dd>
+					</dl>
+				</div>
+			</li>
+			<li class="slds-col--padded-large slds-size--1-of-1 slds-large-size--1-of-3">
+				<div class="grid-card">
+					<img class="cardImg" src="/assets/images/icon-humidity.svg" alt="">
+					<dl>
+						<dt class="site-text-heading--label-weak-large">Humidity</dt>
+						<dd>
+							<hr class="hr hr--purple">
+							<div id="humidityTxt" style="font-size: 36px; text-align: center; color: darkgrey;">0</div>
+						</dd>
+					</dl>
+				</div>
+			</li>
+			<li class="slds-col--padded-large slds-size--1-of-1 slds-large-size--1-of-3">
+				<div class="grid-card">
+					<img class="cardImg" src="/assets/images/icon-pressure.svg" alt="">
+					<dl>
+						<dt class="site-text-heading--label-weak-large">Barometric Pressure</dt>
+						<dd>
+							<hr class="hr hr--pink">
+							<div id="pressureTxt" style="font-size: 36px; text-align: center; color: darkgrey;">0</div>
+						</dd>
+					</dl>
+				</div>
+			</li>
+		</ul>
+	</div>
+  </div>
+  
+  <div class="graph-display" ng-controller="chartController">
+	<canvas id="line" height="300" width="1000" class="chart chart-line" chart-data="data"
+	chart-labels="labels"  chart-series="series" chart-options="options"
+	chart-dataset-override="datasetOverride" chart-colors="colors" chart-click="onClick">
+	</canvas> 
+  </div>
+  
+
+  <div class="slds-section-title--divider slds-m-top--large">10 latest results</div>
+  <div class="slds-m-around--x-large">
+  <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+    <thead>
+	  <tr class="slds-text-title--caps">
+	    <th scope="col">
+		  <div class="slds-truncate" title="Created Date/Time">Created Date/Time</div>
+		</th>
+		<th scope="col">
+		  <div class="slds-truncate" title="Temperature">Temperature</div>
+		</th>
+		<th scope="col">
+		  <div class="slds-truncate" title="Humidity">Humidity</div>
+		</th>
+		<th scope="col">
+		  <div class="slds-truncate" title="Pressure">Pressure</div>
+		</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr ng-repeat="sense_entry in sense_entries | orderBy:'-created' | limitTo:10">
+	  	<td data-label="Created Date/Time">
+	  	  <div class="slds-truncate">{{ sense_entry.created }}</div>
+	  	</td>
+	  	<td data-label="Temperature">
+	  	  <div class="slds-truncate">{{ sense_entry.temperature }}</div>
+	  	</td>
+	  	<td data-label="Humidity">
+	  	  <div class="slds-truncate">{{ sense_entry.humidity }}</div>
+	  	</td>
+	  	<td data-label="Pressure">
+	  	  <div class="slds-truncate">{{ sense_entry.pressure }}</div>
+	  	</td>
+	  </tr>
+	</tbody>
+  </table>
+</body>
+</html>

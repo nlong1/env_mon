@@ -1,0 +1,51 @@
+.grid-card {
+	padding: 3rem 0;
+	margin-bottom: 3rem;
+	background: #fff;
+	border-radius: .25rem;
+	border: 1px solid #d8dde6;
+	color: #5876a3;
+	text-align: center;
+}
+
+.grid-card .hr {
+	margin-top: .75rem;
+}
+
+.hr--orange {
+	background-color: #ffca73;
+	background-image: linear-gradient(to right,rgba(255,202,115,0),#d67b03);
+}
+
+.hr--purple {
+	background-color: #ccd0ff;
+	background-image: linear-gradient(to right,rgba(204,208,255,0),#696cb4);
+}
+
+.hr--pink {
+	background-color: #fa9fbb;
+	background-image: linear-gradient(to right,rgba(250,159,187,0),#bf4c76);
+}
+
+.hr {
+	width: 50%;
+	height: 1px;
+	border: 0;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 15rem;
+}
+
+hr {
+	display: block;
+	margin: 2rem 0;
+	border-top: 1px solid #d8dde6;
+	height: 1px;
+	clear: both;
+	padding: 0;
+}
+.cardImg {
+	height: 100px;
+	width: 100px;
+	margin: 25px;
+}
