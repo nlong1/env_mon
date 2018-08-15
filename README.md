@@ -1,10 +1,7 @@
 # env_mon
 
 -Bare RPi Installation-
-
-apt-get install nodejs -y
-
-sudo apt-get install node
+install node 4.6.0
 
 sudo apt-get install sense-hat
 
