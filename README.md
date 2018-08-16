@@ -15,7 +15,7 @@ mongo
 
 use env_mon
 
-db.createCollection("senseentries", { capped: true, size: 5242880 } )
+db.createCollection("senseentries", { capped: true, size: 2 } )
 
 db.senseentries.find().addOption(2).addOption(32)
 
