@@ -9,8 +9,8 @@ var mongodbUri = "mongodb://127.0.0.1/env_mon";
 
 var app = http.createServer(handler);
 io = io.listen(app);
-app.listen(3000);
-console.log("http server on port 3000");
+app.listen(3030);
+console.log("http server on port 3030");
 
 
 function handler(req, res){
@@ -21,17 +21,13 @@ function handler(req, res){
   });
 }
 
-
-mongo.MongoClient.connect (mongodbUri, function (err, db) {
-
+mongo.MongoClient.connect(mongodbUri, function (err, db) {
   db.collection('senseentries', function(err, collection) {
-
     // open socket
-    io.sockets.on("connection", function (socket) {
+    io.sockets.on('connection', function (socket) {
       // open a tailable cursor
       console.log("= open tailable cursor");
-      collection.find({}, {tailable:true, awaitdata:true, numberOfRetries:-1}).sort({ $natural: 1 }).each(function(err, doc) {
-        console.log(doc);
+      collection.find({}, { tailable:true, awaitdata:true, numberOfRetries:-1 }).each(function(err, doc) {
         // send message to client
         socket.emit("senseentries_evt",doc);
       })
