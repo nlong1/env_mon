@@ -1,16 +1,21 @@
 "use strict";
+var fs = require('fs');
+var ini = require('ini');
+var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'));
+var db_address = config.env.db_address;
+var socket_port = config.env.socket_port;
 
 var mongo = require("mongodb"),
     fs = require("fs"),         // to read static files
     io = require("socket.io"),  // socket io server
     http = require("http");
 
-var mongodbUri = "mongodb://127.0.0.1/env_mon";
+var mongodbUri = db_address;
 
 var app = http.createServer(handler);
 io = io.listen(app);
-app.listen(3030);
-console.log("http server on port 3030");
+app.listen(socket_port);
+console.log("http server on port " + socket_port);
 
 
 function handler(req, res){
