@@ -64,29 +64,45 @@ app.get('/api/sense_entries', function(req, res) {
 
 app.get('/api/sense_entries_graph', function(req, res) {
 
-    SenseEntryArchive.find(function(err, sense_entries_graph) {
-        if (err)
-            res.send(err)
-        var total = sense_entries_graph.length;
-        var created = [];
-        var temp = [];
-        var humidity = [];
-        var pressure = [];
-        for (i = 0; i < total; i++) {
-            created.push(sense_entries_graph[i].created.toUTCString());
-            temp.push(sense_entries_graph[i].temperature);
-            humidity.push(sense_entries_graph[i].humidity);
-            pressure.push(sense_entries_graph[i].pressure);
-        }
-        sense_entries_graph = [created, temp, humidity, pressure];
+    SenseEntryArchive.aggregate([
+        { "$group": {
+            "_id": {
+                "year": { "$year": "$created" },
+                "month": { "$month": "$created" },
+                "day": { "$dayOfMonth": "$created" },
+                "dayOfYear": { "$dayOfYear": "$created" },
+                "hour": {         
+                    "$subtract": [
+                    { "$hour": "$created" },
+                    { "$mod": [{ "$hour": "$created" }, 1 ] }
+                    ]
+                }
+            },
+            "avg_temp": { "$avg": "$temperature" },
+            "avg_humidity": { "$avg": "$humidity" },
+            "avg_pressure": { "$avg": "$pressure" },
+        }},
+        { "$sort": { "_id": -1 } },
+        ], function(err, sense_entries_graph) { 
 
-        res.json(sense_entries_graph);
-        // map res to model for n3-charts here
-    }).sort({
-        'created': 1
+            if (err) { res.send(err) }
+            var total = sense_entries_graph.length;
+            var created = [];
+            var temp = [];
+            var humidity = [];
+            var pressure = [];
+            for (i = 0; i < total; i++) {
+                created_str = String(sense_entries_graph[i]._id.year) + "-" + String(sense_entries_graph[i]._id.month) + "-" + String(sense_entries_graph[i]._id.day) + ' Hour: ' + String(sense_entries_graph[i]._id.hour);
+                created.push(created_str);
+                temp.push(parseFloat(sense_entries_graph[i].avg_temp).toFixed(1));
+                humidity.push(parseFloat(sense_entries_graph[i].avg_humidity).toFixed(1));
+                pressure.push(parseFloat(sense_entries_graph[i].avg_pressure).toFixed(1));
+            }
+            sense_entries_graph = [created, temp, humidity, pressure];
+
+            res.json(sense_entries_graph);
     });
 });
-
 
 app.post('/api/sense_entries', function(req, res) {
 

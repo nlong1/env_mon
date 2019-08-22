@@ -2,7 +2,7 @@ var MongoClient = require('mongodb').MongoClient;
 var nodemailer = require('nodemailer');
 var fs = require('fs');
 var ini = require('ini');
-var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
+var config = ini.parse(fs.readFileSync('/home/pi/env_mon/config.ini', 'utf-8'))
 var email_address, email_addresses = config.email_addresses.array;
 var from_email = config.email_addresses.from_email;
 var smtp_host = config.env.smtp_host;
@@ -20,7 +20,7 @@ MongoClient.connect(db_address, function(err, db) {
         if (temperature >= max_temp || temperature <= min_temp) {
             var rounded_temp = Math.round(temperature)
             var subject  = `Lawrence Temp Alert: ${rounded_temp} Degrees`;
-            var message = `The Lawrence OIT area temperature is ${rounded_temp} degrees.`;
+            var message = `The temperature in the Lawrence OIT area is ${rounded_temp} degrees.`;
             var transOptions = {
                 host: smtp_host,
                 port: parseInt(smtp_port),
